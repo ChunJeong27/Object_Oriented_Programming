@@ -27,13 +27,41 @@ public:
     }
 };
 
-class FlowController
+class SocketDataReader
 {
 public:
+    std::byte* read()
+    {
+
+    }
+};
+
+class FlowController
+{
+private:
+    bool useFile;
+
+public:
+    FlowController(bool useFile) : useFile(useFile)
+    { }
+
     void process()
     {
-        FileDataReader* reader = new FileDataReader();
-        std::byte* data = reader->read();
+        std::byte* data = nullptr;
+        if(useFile)
+        {
+            FileDataReader* fileReader = new FileDataReader();
+            data = fileReader->read();
+
+            delete fileReader;
+        }
+        else
+        {
+            SocketDataReader* socketReader = new SocketDataReader();
+            data = socketReader->read();
+
+            delete socketReader;
+        }
 
         Encryptor* encryptor = new Encryptor();
         std::byte* encryptedData = encryptor->encrypt(data);
@@ -41,7 +69,6 @@ public:
         FileDataWriter* writer = new FileDataWriter();
         writer->write(encryptedData);
 
-        delete reader;
         delete encryptor;
         delete writer;
     }
