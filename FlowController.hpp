@@ -1,9 +1,19 @@
 #include <iostream>
+#include "ByteSource.hpp"
 
-class FileDataReader
+class FileDataReader : public ByteSource
 {
 public:
-    std::byte* read()
+    std::byte* read() override
+    {
+
+    }
+};
+
+class SocketDataReader : public ByteSource
+{
+public:
+    std::byte* read() override
     {
 
     }
@@ -27,15 +37,6 @@ public:
     }
 };
 
-class SocketDataReader
-{
-public:
-    std::byte* read()
-    {
-
-    }
-};
-
 class FlowController
 {
 private:
@@ -47,21 +48,13 @@ public:
 
     void process()
     {
-        std::byte* data = nullptr;
+        ByteSource* source = nullptr;
         if(useFile)
-        {
-            FileDataReader* fileReader = new FileDataReader();
-            data = fileReader->read();
-
-            delete fileReader;
-        }
+            source = new FileDataReader();
         else
-        {
-            SocketDataReader* socketReader = new SocketDataReader();
-            data = socketReader->read();
+            source = new SocketDataReader();
 
-            delete socketReader;
-        }
+        std::byte* data = source->read();        
 
         Encryptor* encryptor = new Encryptor();
         std::byte* encryptedData = encryptor->encrypt(data);
@@ -69,6 +62,7 @@ public:
         FileDataWriter* writer = new FileDataWriter();
         writer->write(encryptedData);
 
+        delete source;
         delete encryptor;
         delete writer;
     }
