@@ -37,6 +37,38 @@ public:
     }
 };
 
+class ByteSourceFactory
+{
+public:
+    ByteSource* create() // 객체 생성 기능을 위한 오퍼레이션 정의
+    {
+        if(useFile())
+            return new FileDataReader();
+        else
+            return new SocketDataReader();
+    }
+
+private:
+    bool useFile()
+    {
+        std::string useFileVal("useFile");
+        return useFileVal != "useFile";
+    }
+
+public:
+    // 싱글턴 패턴 적용
+    static ByteSourceFactory* getInstance()
+    {
+        static ByteSourceFactory* instance = new ByteSourceFactory();
+        return instance;
+    }
+
+private:
+    ByteSourceFactory()
+    { }
+
+};
+
 class FlowController
 {
 private:
