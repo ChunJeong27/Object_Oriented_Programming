@@ -80,13 +80,8 @@ public:
 
     void process()
     {
-        ByteSource* source = nullptr;
-        if(useFile)
-            source = new FileDataReader();
-        else
-            source = new SocketDataReader();
-
-        std::byte* data = source->read();        
+        ByteSource* source = ByteSourceFactory::getInstance()->create();
+        std::byte* data = source->read();
 
         Encryptor* encryptor = new Encryptor();
         std::byte* encryptedData = encryptor->encrypt(data);
